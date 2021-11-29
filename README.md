@@ -16,8 +16,8 @@ After installing Fedora Server, I deployed k3s using [ansible](https://github.co
 ## k3s
 I am running the below services, or in the process of migrating them from docker to k3s
 
-* metallb (Installed via helm)
-* traefik (Installed via helm)
+* metallb
+* traefik
 * radarr
 * sonarr
 * nzbget
@@ -29,3 +29,22 @@ I am running the below services, or in the process of migrating them from docker
 * zwavejs2mqtt
 * nginx server
 * unifi
+* longhorn
+* metrics-server
+
+## metrics-server
+I disabled the bundled metric-server in k3s because it was crashing and was a number of versions behind. I installed the latest version, which as of this time is v0.5.2 via the [components.yaml](https://github.com/kubernetes-sigs/metrics-server/releases/latest/download/components.yaml) file.
+``kubectl apply -f https://github.com/kubernetes-sigs/metrics-server/releases/latest/download/components.yaml``
+
+## Longhorn
+For storage I used longhorn. I first attempted rook-ceph, but that was a dumpster fire, so I gave up. I initially installed longhorn via the helm chart, but ran into issues and resorted to just deploying with kubectl. I will probably revisit the helm chart as I would rather deploy that instead.
+``kubectl apply -f https://raw.githubusercontent.com/longhorn/longhorn/master/deploy/longhorn.yaml``
+
+## MetalLB
+MetalLB is awesome and I used it in the past.
+```
+helm repo add metallb https://metallb.github.io/metallb
+helm repo update
+helm upgrade --install metallb metallb/metallb -n kube-system --values helm/metallb/values.yaml
+```
+
